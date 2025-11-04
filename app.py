@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 # Set the number of cores to use for joblib
-os.environ['LOKY_MAX_CPU_COUNT'] = '4'  # Adjust this number based on your system
+os.environ['LOKY_MAX_CPU_COUNT'] = '4'
 
 app = Flask(__name__)
 
@@ -38,7 +38,6 @@ def depress():
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.form.to_dict()
-    print("Form data received:", data)  # Debugging statement
     df = pd.DataFrame([data])
 
     # Preprocess the input data
@@ -57,7 +56,7 @@ def predict():
         df['Family History of Mental Illness'] = df['family_history'].astype(int)
         df['City_encoded'] = df['city'].map(city_encoding).astype(int)
 
-        # Ensure CGPA is a float
+        
         df['CGPA'] = df['CGPA'].astype(float)
 
         # Cluster CGPA into specified ranges
@@ -65,8 +64,7 @@ def predict():
         labels = ['<5', '5 - <6', '6 - <7', '7 - <8', '8 - <9', '9 - 10']
         df['CGPA_range'] = pd.cut(df['CGPA'], bins=bins, labels=labels, right=False)
 
-        # Print the CGPA range
-        print(f"CGPA {df['CGPA'].values[0]} falls into range {df['CGPA_range'].values[0]}")
+        
 
         # Convert CGPA labels to numerical values
         cgpa_map = {'<5': 0, '5 - <6': 1, '6 - <7': 2, '7 - <8': 3, '8 - <9': 4, '9 - 10': 5}
@@ -74,7 +72,7 @@ def predict():
     except ValueError as e:
         return jsonify({'error': f"Error in input data: {e}"})
 
-    # Ensure the columns are in the correct order
+    
     column_order = ['Gender', 'Age', 'Academic Pressure', 'CGPA', 'Study Satisfaction', 'Sleep Duration', 
                     'Dietary Habits', 'Have you ever had suicidal thoughts ?', 'Work/Study Hours', 'Financial Stress', 
                     'Family History of Mental Illness', 'New_Degree', 'City_encoded']
